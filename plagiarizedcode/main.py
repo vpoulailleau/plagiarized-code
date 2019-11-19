@@ -34,3 +34,8 @@ def main():
     log.info("Starting analysis of %s", str(args.input_path))
     analyzer = CodeAnalyzer()
     analyzer.add_path(args.input_path)
+    with open("log_text.txt", "w", encoding="utf8") as f:
+        f.write(analyzer.text)
+    with open("log_normalized_text.txt", "w", encoding="utf8") as f:
+        f.write(analyzer.normalized_text)
+
