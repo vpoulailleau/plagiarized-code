@@ -1,6 +1,7 @@
 """CLI for plagiarizedcode."""
 
 import argparse
+from pathlib import Path
 
 import simplelogging
 
@@ -8,9 +9,22 @@ from plagiarizedcode.codeanalyzer.codeanalyzer import CodeAnalyzer
 from plagiarizedcode.codeanalyzer.python import PythonFile  # noqa
 from plagiarizedcode.codeanalyzer.ignoredfile import IgnoredFile  # noqa
 
+log = None
+analyzers = []
+
+
+def load_analyzers(path: Path) -> None:
+    if not path.is_dir():
+        log.error("%s is not a directory", path)
+
+    for subpaths in path.iterdir():
+        log.info("Loading code for: %s", subpaths)
+        analyzers.append(CodeAnalyzer(subpaths))
+
 
 def main():
     """Entry point."""
+    global log
     log = simplelogging.get_logger("__main__")
 
     parser = argparse.ArgumentParser(description="Linter for *.po files.")
@@ -32,10 +46,5 @@ def main():
         log.full_logging()
 
     log.info("Starting analysis of %s", str(args.input_path))
-    analyzer = CodeAnalyzer()
-    analyzer.add_path(args.input_path)
-    with open("log_text.txt", "w", encoding="utf8") as f:
-        f.write(analyzer.text)
-    with open("log_normalized_text.txt", "w", encoding="utf8") as f:
-        f.write(analyzer.normalized_text)
+    load_analyzers(Path(args.input_path))
 

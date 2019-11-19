@@ -63,11 +63,13 @@ _ignored_dirs = ("venv", "env", ".git", "__pycache__")
 
 
 class CodeAnalyzer:
-    """Base class of code analyzer."""
+    """Code analyzer."""
 
-    def __init__(self):
+    def __init__(self, path=None):
         """Initializer."""
         self.files: List[CodeFile] = []
+        if path:
+            self.add_path(path)
 
     def add_path(self, path: Union[str, Path]) -> None:
         """
