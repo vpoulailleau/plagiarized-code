@@ -15,6 +15,10 @@ class PythonFile(CodeFile):
             return f.read()
 
     def _get_normalized_text(self):
+        # TODO parenthesis content on one line
+        # TODO dict literal on one line
+        # TODO list literal on one line
+        # TODO set literal on one line
         lines = []
         # remove docstrings and other multiline strings
         text = re.sub(
