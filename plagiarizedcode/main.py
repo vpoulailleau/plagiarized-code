@@ -54,8 +54,8 @@ def check_for_similarities() -> None:
         print()
 
 
-def display_results(result_dict: dict) -> None:
-    """Display results of copy analysis."""
+def display_result_dict(result_dict: dict) -> None:
+    """Display results of copy analysis dictionary."""
     similarities = []
     for one in result_dict:
         for other in result_dict:
@@ -75,7 +75,22 @@ def display_results(result_dict: dict) -> None:
             if value > 1:
                 print("    -", other, "######## copy factor", value)
             else:
-                print("    -", other)
+                # print("    -", other)
+                pass  # no display if ok
+
+
+def display_result() -> None:
+    """Display results of copy analysis."""
+    print()
+    print("#" * 80)
+    print("textual comparison")
+    print("#" * 80)
+    display_result_dict(result_text)
+    print()
+    print("#" * 80)
+    print("normalized textual comparison")
+    print("#" * 80)
+    display_result_dict(result_normalized_text)
 
 
 def main():
@@ -104,5 +119,4 @@ def main():
     log.info("Starting analysis of %s", str(args.input_path))
     load_analyzers(Path(args.input_path))
     check_for_similarities()
-    display_results(result_text)
-    display_results(result_normalized_text)
+    display_result()
