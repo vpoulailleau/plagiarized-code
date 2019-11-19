@@ -120,10 +120,10 @@ class CodeAnalyzer:
     def _convolution_item(item: Sequence[str]) -> int:
         text1, text2 = item
         result = 0
-        nb_char = 5 # nb similar consecutive char
+        nb_char = 5  # nb similar consecutive char
         nb_checks = min(len(text1), len(text2)) - nb_char
         for i in range(nb_checks):
-            if text1[i: i + nb_char] == text2[i: i + nb_char]:
+            if text1[i : i + nb_char] == text2[i : i + nb_char]:
                 result += 1
         return result
 
