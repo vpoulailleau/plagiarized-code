@@ -115,5 +115,20 @@ class CodeAnalyzer:
         """
         return "\n".join(code.normalized_text for code in self.files)
 
+    @staticmethod
+    def _convolution_item(text1: str, text2: str) -> int:
+        return 2
+
+    def _convolution(self, text1: str, text2: str) -> int:
+        convolution_range = min(len(text1), len(text2))
+        result = 0
+        for offset in range(convolution_range + 1):
+            result += self._convolution_item(offset * " " + text1, text2)
+            result += self._convolution_item(offset * " " + text2, text1)
+        return result
+
     def compare(self, other: "CodeAnalyzer") -> Sequence[int]:
-        return 5, 6
+        return (
+            self._convolution(self.text, other.text),
+            self._convolution(self.normalized_text, other.normalized_text),
+        )
