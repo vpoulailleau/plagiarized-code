@@ -1,5 +1,7 @@
 """Python code file."""
 
+import re
+
 from plagiarizedcode.codeanalyzer.codeanalyzer import CodeFile
 
 
@@ -13,4 +15,15 @@ class PythonFile(CodeFile):
             return f.read()
 
     def _get_normalized_text(self):
-        return self.text
+        lines = []
+        # remove docstrings and other multiline strings
+        text = re.sub(
+            r'""".*?"""', "", self.text, flags=re.DOTALL | re.MULTILINE
+        )
+        for line in text.splitlines():
+            # remove comments
+            line = re.sub(r"#.*$", "", line)
+            line = line.rstrip()
+            if line:
+                lines.append(line)
+        return "\n".join(lines)
