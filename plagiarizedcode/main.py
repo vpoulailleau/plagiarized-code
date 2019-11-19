@@ -120,3 +120,7 @@ def main():
     load_analyzers(Path(args.input_path))
     check_for_similarities()
     display_result()
+
+
+if __name__ == "__main__":
+    main()
