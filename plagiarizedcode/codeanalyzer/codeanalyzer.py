@@ -1,5 +1,6 @@
 """Base class of code analyzer."""
 
+from collections import deque
 from pathlib import Path
 from typing import Union, Tuple, List, Sequence
 
@@ -117,12 +118,23 @@ class CodeAnalyzer:
 
     @staticmethod
     def _convolution_item(text1: str, text2: str) -> int:
-        return 2
+        result = 0
+        nb_consecutive_identical_char = 5
+        text1_queue = deque(maxlen=nb_consecutive_identical_char)
+        text2_queue = deque(maxlen=nb_consecutive_identical_char)
+        for char1, char2 in zip(text1, text2):
+            text1_queue.append(char1)
+            text2_queue.append(char2)
+            if str(text1_queue) == str(text2_queue):
+                # identical nb_consecutive_identical_char
+                result += 1
+        return result
 
     def _convolution(self, text1: str, text2: str) -> int:
         convolution_range = min(len(text1), len(text2))
         result = 0
         for offset in range(convolution_range + 1):
+            print("offest", offset, "/", convolution_range)
             result += self._convolution_item(offset * " " + text1, text2)
             result += self._convolution_item(offset * " " + text2, text1)
         return result
