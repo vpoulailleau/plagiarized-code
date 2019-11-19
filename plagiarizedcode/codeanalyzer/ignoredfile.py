@@ -10,7 +10,7 @@ log = simplelogging.get_logger()
 class IgnoredFile(CodeFile):
     """Ignored code file."""
 
-    supported_extensions = ("txt", "md", "")
+    supported_extensions = ("", "txt", "md", "odp", "csv", "ods", "text")
 
     def __init__(self, path):
         log.info("ignored file: %s", path)
