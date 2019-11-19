@@ -1,9 +1,49 @@
 """Base class of code analyzer."""
 
 from pathlib import Path
-from typing import Union
+from typing import Union, Tuple, List
 
-# TODO CodeFile
+
+class CodeFile:
+    """Base class of code file."""
+
+    supported_extensions: Tuple[str] = ()  # ("cpp", "cxx", "hpp", "h")
+
+    def __init__(self, path: Path):
+        """Initializer."""
+        self.path = path
+        self._text = None
+        self._normalized_text = None
+
+    @property
+    def text(self):
+        """Return textual representation of the code."""
+        if self._text is None:
+            self._text = self._get_text()
+        return self._text
+
+    @property
+    def normalized_text(self):
+        """
+        Return normalized textual representation of the code.
+
+        Comments are ignored, code is indented in a strict fashion.
+        """
+        if self._normalized_text is None:
+            self._normalized_text = self._get_normalized_text()
+        return self._normalized_text
+
+    def _get_text(self) -> str:
+        """Return textual representation of the code."""
+        raise NotImplementedError("To be implemented by a subclass")
+
+    def _get_normalized_text(self) -> str:
+        """
+        Return normalized textual representation of the code.
+
+        Comments are ignored, code is indented in a strict fashion.
+        """
+        raise NotImplementedError("To be implemented by a subclass")
 
 
 class CodeAnalyzer:
@@ -11,7 +51,7 @@ class CodeAnalyzer:
 
     def __init__(self):
         """Initializer."""
-        self.files = []
+        self.files: List[CodeFile] = []
 
     def add_path(self, path: Union[str, Path]) -> None:
         """
@@ -31,7 +71,7 @@ class CodeAnalyzer:
     @property
     def text(self):
         """Return textual representation of the code."""
-        raise NotImplementedError("To be implemented by a subclass")
+        return "\n".join(code.text for code in self.files)
 
     @property
     def normalized_text(self):
@@ -40,4 +80,4 @@ class CodeAnalyzer:
 
         Comments are ignored, code is indented in a strict fashion.
         """
-        raise NotImplementedError("To be implemented by a subclass")
+        return "\n".join(code.normalized_text for code in self.files)
