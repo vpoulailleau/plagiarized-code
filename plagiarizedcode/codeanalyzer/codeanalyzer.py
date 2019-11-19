@@ -91,7 +91,7 @@ class CodeAnalyzer:
                     return
             extension = path.suffix
             for cls in _code_file_classes:
-                if extension in cls.supported_extensions:
+                if extension[1:] in cls.supported_extensions:
                     self.files.append(cls(path=path))
                     break
             else:

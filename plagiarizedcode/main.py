@@ -5,6 +5,8 @@ import argparse
 import simplelogging
 
 from plagiarizedcode.codeanalyzer.codeanalyzer import CodeAnalyzer
+from plagiarizedcode.codeanalyzer.python import PythonFile
+from plagiarizedcode.codeanalyzer.ignoredfile import IgnoredFile
 
 
 def main():
