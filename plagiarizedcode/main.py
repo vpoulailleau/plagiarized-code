@@ -4,6 +4,8 @@ import argparse
 
 import simplelogging
 
+from plagiarizedcode.codeanalyzer.codeanalyzer import CodeAnalyzer
+
 
 def main():
     """Entry point."""
@@ -28,3 +30,5 @@ def main():
         log.full_logging()
 
     log.info("Starting analysis of %s", str(args.input_path))
+    analyzer = CodeAnalyzer()
+    analyzer.add_path(args.input_path)

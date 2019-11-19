@@ -3,8 +3,21 @@
 from pathlib import Path
 from typing import Union, Tuple, List
 
+import simplelogging
 
-class CodeFile:
+log = simplelogging.get_logger()
+
+_code_file_classes = set()
+
+
+class _RegisteringMeta(type):
+    def __new__(cls, name, bases, class_dict):
+        cls = type.__new__(cls, name, bases, class_dict)
+        _code_file_classes.add(cls)
+        return cls
+
+
+class CodeFile(metaclass=_RegisteringMeta):
     """Base class of code file."""
 
     supported_extensions: Tuple[str] = ()  # ("cpp", "cxx", "hpp", "h")
@@ -66,7 +79,13 @@ class CodeAnalyzer:
             for filepath in path.rglob("*"):
                 self.add_path(filepath)
         elif path.is_file():
-            self.files.append(path)
+            extension = path.suffix
+            for cls in _code_file_classes:
+                if extension in cls.supported_extensions:
+                    self.files.append(cls(path=path))
+                    break
+            else:
+                log.warning("Unknown extension: %s (%s)", extension, path)
 
     @property
     def text(self):
