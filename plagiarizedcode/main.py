@@ -35,9 +35,9 @@ def check_for_similarities() -> None:
 
     for index, code in enumerate(analyzers):
         _add_in_result(code.name)
-        print(f"{code.name:30}", end=" ")
+        print(f"{code.name:30}", end=" ", flush=True)
         for other_code in analyzers[index + 1 :]:
-            print("#", end="")
+            print("#", end="", flush=True)
             _add_in_result(other_code.name)
             text_similarity, normalized_text_similarity = code.compare(
                 other_code
