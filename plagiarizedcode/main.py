@@ -2,6 +2,7 @@
 
 import argparse
 from pathlib import Path
+from typing import List
 
 import simplelogging
 
@@ -10,16 +11,43 @@ from plagiarizedcode.codeanalyzer.python import PythonFile  # noqa
 from plagiarizedcode.codeanalyzer.ignoredfile import IgnoredFile  # noqa
 
 log = None
-analyzers = []
+analyzers: List[CodeAnalyzer] = []
+result_text = {}
+result_normalized_text = {}
 
 
 def load_analyzers(path: Path) -> None:
+    """Load a code analyzer for each child of path."""
     if not path.is_dir():
         log.error("%s is not a directory", path)
 
-    for subpaths in path.iterdir():
-        log.info("Loading code for: %s", subpaths)
-        analyzers.append(CodeAnalyzer(subpaths))
+    for subpath in path.iterdir():
+        log.info("Loading code for: %s", subpath)
+        analyzers.append(CodeAnalyzer(name=subpath.name, path=subpath))
+
+
+def check_for_similarities() -> None:
+    def _add_in_result(name):
+        if name not in result_text:
+            result_text[name] = {}
+        if name not in result_normalized_text:
+            result_normalized_text[name] = {}
+
+    for index, code in enumerate(analyzers):
+        _add_in_result(code.name)
+        for other_code in analyzers[index + 1 :]:
+            _add_in_result(other_code.name)
+            text_similarity, normalized_text_similarity = code.compare(
+                other_code
+            )
+            result_text[code.name][other_code.name] = text_similarity
+            result_text[other_code.name][code.name] = text_similarity
+            result_normalized_text[code.name][
+                other_code.name
+            ] = normalized_text_similarity
+            result_normalized_text[other_code.name][
+                code.name
+            ] = normalized_text_similarity
 
 
 def main():
@@ -47,4 +75,5 @@ def main():
 
     log.info("Starting analysis of %s", str(args.input_path))
     load_analyzers(Path(args.input_path))
-
+    check_for_similarities()
+    print(result_text)

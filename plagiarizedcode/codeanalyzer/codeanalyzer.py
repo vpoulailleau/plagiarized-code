@@ -1,7 +1,7 @@
 """Base class of code analyzer."""
 
 from pathlib import Path
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Sequence
 
 import simplelogging
 
@@ -65,9 +65,10 @@ _ignored_dirs = ("venv", "env", ".git", "__pycache__")
 class CodeAnalyzer:
     """Code analyzer."""
 
-    def __init__(self, path=None):
+    def __init__(self, name: str, path=None):
         """Initializer."""
         self.files: List[CodeFile] = []
+        self.name = name
         if path:
             self.add_path(path)
 
@@ -113,3 +114,6 @@ class CodeAnalyzer:
         Comments are ignored, code is indented in a strict fashion.
         """
         return "\n".join(code.normalized_text for code in self.files)
+
+    def compare(self, other: "CodeAnalyzer") -> Sequence[int]:
+        return 5, 6
