@@ -15,3 +15,9 @@ class IgnoredFile(CodeFile):
     def __init__(self, path):
         log.info("ignored file: %s", path)
         super().__init__(path)
+
+    def _get_text(self):
+        return ""
+
+    def _get_normalized_text(self):
+        return ""
