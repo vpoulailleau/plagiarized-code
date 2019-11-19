@@ -2,6 +2,7 @@
 
 import argparse
 from pathlib import Path
+from statistics import median, stdev
 from typing import List
 
 import simplelogging
@@ -53,6 +54,30 @@ def check_for_similarities() -> None:
         print()
 
 
+def display_results(result_dict: dict) -> None:
+    """Display results of copy analysis."""
+    similarities = []
+    for one in result_dict:
+        for other in result_dict:
+            if one == other:
+                continue
+            similarities.append(result_dict[one][other])
+    xbar = median(similarities)
+    dev = stdev(similarities, xbar=xbar)
+    for one in result_dict:
+        print("-", one)
+        for other in result_dict:
+            if one == other:
+                continue
+            value = result_dict[one][other]
+            value = abs(value - xbar)
+            value /= dev
+            if value > 1:
+                print("    -", other, "######## copy factor", value)
+            else:
+                print("    -", other)
+
+
 def main():
     """Entry point."""
     global log
@@ -79,4 +104,5 @@ def main():
     log.info("Starting analysis of %s", str(args.input_path))
     load_analyzers(Path(args.input_path))
     check_for_similarities()
-    print(result_text)
+    display_results(result_text)
+    display_results(result_normalized_text)
