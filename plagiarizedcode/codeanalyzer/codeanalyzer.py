@@ -58,12 +58,9 @@ class CodeFile(metaclass=_RegisteringMeta):
         """
         raise NotImplementedError("To be implemented by a subclass")
 
-_ignored_dirs = (
-    "venv",
-    "env",
-    ".git",
-    "__pycache__",
-)
+
+_ignored_dirs = ("venv", "env", ".git", "__pycache__")
+
 
 class CodeAnalyzer:
     """Base class of code analyzer."""
@@ -88,8 +85,8 @@ class CodeAnalyzer:
             for filepath in path.rglob("*"):
                 self.add_path(filepath)
         elif path.is_file():
-            for dir in path.parents:
-                if dir.name in _ignored_dirs:
+            for dir_ in path.parents:
+                if dir_.name in _ignored_dirs:
                     log.debug("ignoring file because of a directory: %s", path)
                     return
             extension = path.suffix
