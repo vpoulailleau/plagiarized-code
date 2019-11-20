@@ -88,8 +88,12 @@ def display_result_dict(result_dict: dict) -> None:
             if one == other:
                 continue
             similarities.append(result_dict[one][other])
+
+    min_ = min(similarities)
+    similarities = [x - min_ for x in similarities]
     xbar = median(similarities)
     dev = stdev(similarities, xbar=xbar)
+    max_ = max(similarities)
     for one in sorted(result_dict, key=lambda k: k.lower()):
         print("-", one)
         for other in sorted(
@@ -97,13 +101,11 @@ def display_result_dict(result_dict: dict) -> None:
         ):
             if one == other:
                 continue
-            value = result_dict[one][other]
-            value = value - xbar
-            value /= dev
-            if value > 0:
-                representation = "=" * int(value * 4)
+            value = result_dict[one][other] - min_
+            if value > xbar + 3 * dev:
+                representation = "=" * int(min(100, 4 * value / dev))
                 print(
-                    f"    - {other:30}: copy factor {value:.2f}   {representation}"
+                    f"    - {other:30}: copy factor {(value - xbar) / dev:.2f} {representation}"
                 )
             else:
                 # print("    -", other)
