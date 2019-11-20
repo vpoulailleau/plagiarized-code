@@ -130,14 +130,14 @@ class CodeAnalyzer:
             nb_checks = min(len(sample1), len(sample2)) - nb_char
             convolution_list.append((nb_checks, sample1, sample2))
 
-        result = 0
-        for nb_checks, text1, text2 in convolution_list:
-            result += sum(
-                1
+        return sum(
+            sum(
+                1  # TODO mettre directement le booléen
                 for i in range(nb_checks)
                 if text1[i : i + nb_char] == text2[i : i + nb_char]
             )
-        return result
+            for nb_checks, text1, text2 in convolution_list
+        )
 
     def compare(self, other: "CodeAnalyzer") -> Sequence[int]:
         return (
