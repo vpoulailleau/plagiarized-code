@@ -130,17 +130,17 @@ class CodeAnalyzer:
             length = min(len(sample1), len(sample2))
             convolution_list.append((length, sample1, sample2))
 
-        result = 0
         expected = "1" * nb_char
         count = str.count
-        for length, text1, text2 in convolution_list:
-            comparisons = "".join(
-                "1" if text1[i] == text2[i] else "0"
-                for i in range(length)
-                )
-            result += count(comparisons, expected)
-        return result
-
+        return sum(
+            count(
+                "".join(
+                    "1" if text1[i] == text2[i] else "0" for i in range(length)
+                ),
+                expected,
+            )
+            for length, text1, text2 in convolution_list
+        )
 
     def compare(self, other: "CodeAnalyzer") -> Sequence[int]:
         return (
