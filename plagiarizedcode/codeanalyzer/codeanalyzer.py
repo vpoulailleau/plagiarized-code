@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Union, Tuple, List, Sequence
 
 import simplelogging
+import textdistance
 
 log = simplelogging.get_logger()
 
@@ -115,27 +116,10 @@ class CodeAnalyzer:
         """
         return "\n".join(code.normalized_text for code in self.files)
 
-    def _convolution(self, text1: str, text2: str) -> int:
-        convolution_range = min(len(text1), len(text2))
-        convolution_list = []
-        for offset in range(convolution_range + 1):
-            sample1 = offset * " " + text1
-            sample2 = text2
-            length = min(len(sample1), len(sample2))
-            convolution_list.append((length, sample1, sample2))
-        for offset in range(1, convolution_range + 1):
-            sample1 = text1
-            sample2 = offset * " " + text2
-            length = min(len(sample1), len(sample2))
-            convolution_list.append((length, sample1, sample2))
-
-        return sum(
-            sum(1 for i in range(length) if text1[i] == text2[i])
-            for length, text1, text2 in convolution_list
-        )
-
     def compare(self, other: "CodeAnalyzer") -> Sequence[int]:
+        similarity = textdistance.damerau_levenshtein.similarity
         return (
-            self._convolution(self.text, other.text),
-            self._convolution(self.normalized_text, other.normalized_text),
+
+            similarity(self.text, other.text),
+            similarity(self.normalized_text, other.normalized_text),
         )
