@@ -41,8 +41,10 @@ def check_for_similarities() -> None:
     def _add_in_result(name):
         if name not in result_text:
             result_text[name] = {}
+            result_text[name][name] = 0
         if name not in result_normalized_text:
             result_normalized_text[name] = {}
+            result_normalized_text[name][name] = 0
 
     comparison_list = []
     nb_comparisons = len(analyzers) * (len(analyzers) - 1) / 2
@@ -86,9 +88,9 @@ def display_result_dict(result_dict: dict) -> None:
             similarities.append(result_dict[one][other])
     xbar = median(similarities)
     dev = stdev(similarities, xbar=xbar)
-    for one in result_dict:
+    for one in sorted(result_dict):
         print("-", one)
-        for other in result_dict:
+        for other in sorted(result_dict, reverse=True, key=lambda k: result_dict[one][k]):
             if one == other:
                 continue
             value = result_dict[one][other]
