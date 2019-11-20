@@ -1,6 +1,5 @@
 """Base class of code analyzer."""
 
-import multiprocessing
 from pathlib import Path
 from typing import Union, Tuple, List, Sequence
 
@@ -116,29 +115,22 @@ class CodeAnalyzer:
         """
         return "\n".join(code.normalized_text for code in self.files)
 
-    @staticmethod
-    def _convolution_item(item: Sequence[str]) -> int:
-        text1, text2 = item
-        result = 0
-        nb_char = 5  # nb similar consecutive char
-        nb_checks = min(len(text1), len(text2)) - nb_char
-        for i in range(nb_checks):
-            if text1[i : i + nb_char] == text2[i : i + nb_char]:
-                result += 1
-        return result
-
     def _convolution(self, text1: str, text2: str) -> int:
         convolution_range = min(len(text1), len(text2))
         convolution_list = []
         for offset in range(convolution_range + 1):
             convolution_list.append((offset * " " + text1, text2))
+        for offset in range(1, convolution_range + 1):
             convolution_list.append((offset * " " + text2, text1))
 
-        pool = multiprocessing.Pool(multiprocessing.cpu_count())
-        result = pool.imap(self._convolution_item, convolution_list)
-        pool.close()
-        pool.join()
-        return sum(result)
+        result = 0
+        nb_char = 5  # nb similar consecutive char
+        for text1, text2 in convolution_list:
+            nb_checks = min(len(text1), len(text2)) - nb_char
+            for i in range(nb_checks):
+                if text1[i : i + nb_char] == text2[i : i + nb_char]:
+                    result += 1
+        return result
 
     def compare(self, other: "CodeAnalyzer") -> Sequence[int]:
         return (
