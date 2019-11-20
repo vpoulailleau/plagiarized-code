@@ -132,7 +132,7 @@ class CodeAnalyzer:
 
         return sum(
             sum(
-                1  # TODO mettre directement le booléen
+                1
                 for i in range(nb_checks)
                 if text1[i : i + nb_char] == text2[i : i + nb_char]
             )
