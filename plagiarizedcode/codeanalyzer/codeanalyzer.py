@@ -116,10 +116,13 @@ class CodeAnalyzer:
         """
         return "\n".join(code.normalized_text for code in self.files)
 
+    def __len__(self):
+        """Return length of self.text."""
+        return len(self.text)
+
     def compare(self, other: "CodeAnalyzer") -> Sequence[int]:
         similarity = textdistance.damerau_levenshtein.similarity
         return (
-
             similarity(self.text, other.text),
             similarity(self.normalized_text, other.normalized_text),
         )

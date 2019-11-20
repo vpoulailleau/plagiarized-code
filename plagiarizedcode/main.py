@@ -10,7 +10,7 @@ import simplelogging
 
 from plagiarizedcode.codeanalyzer.codeanalyzer import CodeAnalyzer
 from plagiarizedcode.codeanalyzer.python import PythonFile  # noqa
-from plagiarizedcode.codeanalyzer.ignoredfile import IgnoredFile  # noqa
+from plagiarizedcode.codeanalyzer.ignoredfile import IgnoredFile
 
 log = None
 analyzers: List[CodeAnalyzer] = []
@@ -25,7 +25,9 @@ def load_analyzers(path: Path) -> None:
 
     for subpath in path.iterdir():
         log.info("Loading code for: %s", subpath)
-        analyzers.append(CodeAnalyzer(name=subpath.name, path=subpath))
+        analyzer = CodeAnalyzer(name=subpath.name, path=subpath)
+        if len(analyzer):
+            analyzers.append(analyzer)
 
 
 def do_comparison(item: List[CodeAnalyzer]):
@@ -88,17 +90,21 @@ def display_result_dict(result_dict: dict) -> None:
             similarities.append(result_dict[one][other])
     xbar = median(similarities)
     dev = stdev(similarities, xbar=xbar)
-    for one in sorted(result_dict):
+    for one in sorted(result_dict, key=lambda k: k.lower()):
         print("-", one)
-        for other in sorted(result_dict, reverse=True, key=lambda k: result_dict[one][k]):
+        for other in sorted(
+            result_dict, reverse=True, key=lambda k: result_dict[one][k]
+        ):
             if one == other:
                 continue
             value = result_dict[one][other]
             value = value - xbar
             value /= dev
-            if value > 2:
+            if value > 0:
                 representation = "=" * int(value * 4)
-                print(f"    - {other:30}: copy factor {value:.2f}   {representation}")
+                print(
+                    f"    - {other:30}: copy factor {value:.2f}   {representation}"
+                )
             else:
                 # print("    -", other)
                 pass  # no display if ok
