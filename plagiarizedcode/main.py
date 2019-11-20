@@ -94,8 +94,9 @@ def display_result_dict(result_dict: dict) -> None:
             value = result_dict[one][other]
             value = value - xbar
             value /= dev
-            if value > 1:
-                print(f"    - {other:30}: copy factor {value:.2f}")
+            if value > 3:
+                representation = "=" * int(value * 4)
+                print(f"    - {other:30}: copy factor {value:.2f}   {representation}")
             else:
                 # print("    -", other)
                 pass  # no display if ok
