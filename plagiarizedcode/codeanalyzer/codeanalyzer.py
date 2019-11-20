@@ -122,22 +122,25 @@ class CodeAnalyzer:
         for offset in range(convolution_range + 1):
             sample1 = offset * " " + text1
             sample2 = text2
-            nb_checks = min(len(sample1), len(sample2)) - nb_char
-            convolution_list.append((nb_checks, sample1, sample2))
+            length = min(len(sample1), len(sample2))
+            convolution_list.append((length, sample1, sample2))
         for offset in range(1, convolution_range + 1):
             sample1 = text1
             sample2 = offset * " " + text2
-            nb_checks = min(len(sample1), len(sample2)) - nb_char
-            convolution_list.append((nb_checks, sample1, sample2))
+            length = min(len(sample1), len(sample2))
+            convolution_list.append((length, sample1, sample2))
 
-        return sum(
-            sum(
-                1
-                for i in range(nb_checks)
-                if text1[i : i + nb_char] == text2[i : i + nb_char]
-            )
-            for nb_checks, text1, text2 in convolution_list
-        )
+        result = 0
+        expected = "1" * nb_char
+        count = str.count
+        for length, text1, text2 in convolution_list:
+            comparisons = "".join(
+                "1" if text1[i] == text2[i] else "0"
+                for i in range(length)
+                )
+            result += count(comparisons, expected)
+        return result
+
 
     def compare(self, other: "CodeAnalyzer") -> Sequence[int]:
         return (
