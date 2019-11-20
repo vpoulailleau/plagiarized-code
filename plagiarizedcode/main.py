@@ -70,7 +70,7 @@ def display_result_dict(result_dict: dict) -> None:
             if one == other:
                 continue
             value = result_dict[one][other]
-            value = abs(value - xbar)
+            value = value - xbar
             value /= dev
             if value > 1:
                 print("    -", other, "######## copy factor", value)
