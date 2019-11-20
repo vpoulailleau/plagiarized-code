@@ -116,7 +116,6 @@ class CodeAnalyzer:
         return "\n".join(code.normalized_text for code in self.files)
 
     def _convolution(self, text1: str, text2: str) -> int:
-        nb_char = 5  # nb similar consecutive char
         convolution_range = min(len(text1), len(text2))
         convolution_list = []
         for offset in range(convolution_range + 1):
@@ -130,15 +129,8 @@ class CodeAnalyzer:
             length = min(len(sample1), len(sample2))
             convolution_list.append((length, sample1, sample2))
 
-        expected = "1" * nb_char
-        count = str.count
         return sum(
-            count(
-                "".join(
-                    "1" if text1[i] == text2[i] else "0" for i in range(length)
-                ),
-                expected,
-            )
+            sum(1 for i in range(length) if text1[i] == text2[i])
             for length, text1, text2 in convolution_list
         )
 
