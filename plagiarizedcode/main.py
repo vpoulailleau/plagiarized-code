@@ -73,7 +73,7 @@ def display_result_dict(result_dict: dict) -> None:
             value = value - xbar
             value /= dev
             if value > 1:
-                print("    -", other, "######## copy factor", value)
+                print(f"    - {other}: copy factor {value:.2f}")
             else:
                 # print("    -", other)
                 pass  # no display if ok
