@@ -1,6 +1,7 @@
 """CLI for plagiarizedcode."""
 
 import argparse
+import multiprocessing
 from pathlib import Path
 from statistics import median, stdev
 from typing import List
@@ -27,6 +28,15 @@ def load_analyzers(path: Path) -> None:
         analyzers.append(CodeAnalyzer(name=subpath.name, path=subpath))
 
 
+def do_comparison(item: List[CodeAnalyzer]):
+    progress, code, other_code = item
+    progress = int(progress * 100)
+    print("#" * progress + "-" * (100 - progress), flush=True)
+    # return code.name, other_code.name, *code.compare(other_code)  # TODO bug black
+    text, norm_text = code.compare(other_code)
+    return code.name, other_code.name, text, norm_text
+
+
 def check_for_similarities() -> None:
     def _add_in_result(name):
         if name not in result_text:
@@ -34,24 +44,36 @@ def check_for_similarities() -> None:
         if name not in result_normalized_text:
             result_normalized_text[name] = {}
 
+    comparison_list = []
+    nb_comparisons = len(analyzers) * (len(analyzers) - 1) / 2
+    comparison_index = 0
     for index, code in enumerate(analyzers):
         _add_in_result(code.name)
-        print(f"{code.name:30}", end=" ", flush=True)
         for other_code in analyzers[index + 1 :]:
-            print("#", end="", flush=True)
             _add_in_result(other_code.name)
-            text_similarity, normalized_text_similarity = code.compare(
-                other_code
+            comparison_index += 1
+            comparison_list.append(
+                (comparison_index / nb_comparisons, code, other_code)
             )
-            result_text[code.name][other_code.name] = text_similarity
-            result_text[other_code.name][code.name] = text_similarity
-            result_normalized_text[code.name][
-                other_code.name
-            ] = normalized_text_similarity
-            result_normalized_text[other_code.name][
-                code.name
-            ] = normalized_text_similarity
-        print()
+
+    pool = multiprocessing.Pool(multiprocessing.cpu_count())
+    result = pool.imap(do_comparison, comparison_list)
+    pool.close()
+    pool.join()
+    for (
+        code1_name,
+        code2_name,
+        text_similarity,
+        normalized_text_similarity,
+    ) in result:
+        result_text[code1_name][code2_name] = text_similarity
+        result_text[code2_name][code1_name] = text_similarity
+        result_normalized_text[code1_name][
+            code2_name
+        ] = normalized_text_similarity
+        result_normalized_text[code2_name][
+            code1_name
+        ] = normalized_text_similarity
 
 
 def display_result_dict(result_dict: dict) -> None:
