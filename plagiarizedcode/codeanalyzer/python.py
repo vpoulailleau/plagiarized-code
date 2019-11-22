@@ -1,6 +1,7 @@
 """Python code file."""
 
 import re
+from typing import List
 
 from plagiarizedcode.codeanalyzer.codeanalyzer import CodeFile
 from plagiarizedcode.codeanalyzer.utils import parenthesis_in_one_line
@@ -29,3 +30,12 @@ class PythonFile(CodeFile):
         text = "\n".join(lines)
         text = parenthesis_in_one_line(text)
         return text
+
+    @property
+    def blocks(self) -> List[str]:
+        result = [""]
+        for line in self.normalized_text.splitlines():
+            if line.endswith(":") and not line.startswith((" ", "\t")):
+                result.append("")
+            result[-1] += line + "\n"
+        return result

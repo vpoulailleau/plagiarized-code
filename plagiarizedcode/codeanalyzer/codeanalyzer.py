@@ -59,6 +59,11 @@ class CodeFile(metaclass=_RegisteringMeta):
         """
         raise NotImplementedError("To be implemented by a subclass")
 
+    @property
+    def blocks(self) -> List[str]:
+        """Return list of code blocks."""
+        raise NotImplementedError("To be implemented by a subclass")
+
 
 _ignored_dirs = ("venv", "env", ".git", "__pycache__")
 
@@ -115,6 +120,15 @@ class CodeAnalyzer:
         Comments are ignored, code is indented in a strict fashion.
         """
         return "\n".join(code.normalized_text for code in self.files)
+
+    @property
+    def blocks(self) -> List[str]:
+        """Return list of code blocks."""
+        result = []
+        for code in self.files:
+            for block in code.blocks:
+                result.append(block)
+        return result
 
     def __len__(self):
         """Return length of self.text."""
