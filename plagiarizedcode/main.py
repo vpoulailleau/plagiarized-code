@@ -151,8 +151,52 @@ def main():
 
     log.info("Starting analysis of %s", str(args.input_path))
     load_analyzers(Path(args.input_path))
-    check_for_similarities()
-    display_result()
+    # check_for_similarities()
+    # display_result()
+    print("\n\n\n")
+
+    import textdistance
+
+    def code_is_similar(code1, code2):
+        return textdistance.damerau_levenshtein.distance(code1, code2) < 50
+
+    code_blocks = {}
+    code_blocks_owners = {}
+    for code in analyzers:
+        for block in code.blocks:
+            if block not in code_blocks_owners:
+                code_blocks_owners[block] = []
+            code_blocks_owners[block].append(code.name)
+            if block not in code_blocks:
+                code_blocks[block] = 0
+            for existing_block in code_blocks:
+                if code_is_similar(block, existing_block):
+                    code_blocks[block] += 1
+                    code_blocks[existing_block] += 1
+    for block, nb in code_blocks.items():
+        code_blocks[block] = nb
+    nb_analyzers = len(analyzers)
+    for code in analyzers:
+        print("#" * 80)
+        print(code.name)
+        for block in code.blocks:
+            if (
+                code_blocks[block] > 2
+                and code_blocks[block] < 0.8 * nb_analyzers
+                and len(block.splitlines()) > 2
+            ):
+                print("-" * 80)
+                print(
+                    f"found {code_blocks[block] - 2} similar versions of this code"
+                )
+                print(block[:200] + "…")
+                for other_block, owners in code_blocks_owners.items():
+                    if code_is_similar(block, other_block):
+                        print("\n\n")
+                        for owner in owners:
+                            print("    - code in", owner)
+                        for line in other_block.splitlines()[:10]:
+                            print("        ", line)
 
 
 if __name__ == "__main__":
