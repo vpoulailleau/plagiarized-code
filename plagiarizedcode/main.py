@@ -1,6 +1,7 @@
 """CLI for plagiarizedcode."""
 
 import argparse
+import re
 from pathlib import Path
 from typing import List
 
@@ -30,7 +31,12 @@ def _load_analyzers(path: Path) -> None:
 
 
 def code_is_similar(code1, code2):
-    return textdistance.damerau_levenshtein.distance(code1, code2) < 50
+    len_code1 = " ".join(code1.splitlines())
+    len_code1 = len(re.sub(r"\s+", " ", len_code1))
+    len_code2 = " ".join(code2.splitlines())
+    len_code2 = len(re.sub(r"\s+", " ", len_code2))
+    tolerance = max(len_code1, len_code2) * 0.3
+    return textdistance.damerau_levenshtein.distance(code1, code2) < tolerance
 
 
 def _check_for_similarities() -> None:
