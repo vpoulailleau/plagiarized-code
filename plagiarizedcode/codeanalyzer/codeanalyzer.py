@@ -62,7 +62,9 @@ class CodeFile(metaclass=_RegisteringMeta):
     @property
     def blocks(self) -> List[str]:
         """Return list of code blocks."""
-        raise NotImplementedError("To be implemented by a subclass")
+        raise NotImplementedError(
+            f"To be implemented by a subclass {self.path}"
+        )
 
 
 _ignored_dirs = ("venv", "env", ".git", "__pycache__")
