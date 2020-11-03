@@ -87,7 +87,7 @@ def _display_result() -> None:
                         print("\n\n")
                         for owner in owners:
                             print("    - code in", owner)
-                        for line in other_block.splitlines()[:10]:
+                        for line in other_block.splitlines()[:20]:
                             print("        ", line)
 
 
