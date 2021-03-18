@@ -38,7 +38,7 @@ def code_len(code: str) -> int:
         normalized_code = " ".join(code.splitlines())
         normalized_code = re.sub(r"\s+", " ", normalized_code)
         _code_len_cache[code] = len(normalized_code)
-    return _code_len_cache
+    return _code_len_cache[code]
 
 
 def code_is_similar(code1, code2):
