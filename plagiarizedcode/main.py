@@ -2,6 +2,7 @@
 
 import argparse
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import List
 
@@ -16,6 +17,7 @@ log = None
 analyzers: List[CodeAnalyzer] = []
 code_blocks = {}
 code_blocks_owners = {}
+_code_len_cache = {}
 
 
 def _load_analyzers(path: Path) -> None:
@@ -30,17 +32,23 @@ def _load_analyzers(path: Path) -> None:
             analyzers.append(analyzer)
 
 
+def code_len(code: str) -> int:
+    """Return length of normalized code."""
+    if code not in _code_len_cache:
+        normalized_code = " ".join(code.splitlines())
+        normalized_code = re.sub(r"\s+", " ", normalized_code)
+        _code_len_cache[code] = len(normalized_code)
+    return _code_len_cache
+
+
 def code_is_similar(code1, code2):
-    len_code1 = " ".join(code1.splitlines())
-    len_code1 = len(re.sub(r"\s+", " ", len_code1))
-    len_code2 = " ".join(code2.splitlines())
-    len_code2 = len(re.sub(r"\s+", " ", len_code2))
+    len_code1 = code_len(code1)
+    len_code2 = code_len(code2)
     tolerance = max(len_code1, len_code2) * 0.3
     return textdistance.damerau_levenshtein.distance(code1, code2) < tolerance
 
 
 def _check_for_similarities() -> None:
-
     for code in analyzers:
         for block in code.blocks:
 
@@ -78,8 +86,7 @@ def _display_result() -> None:
                 print()
                 print("-" * 80)
                 print(
-                    f"found {code_blocks[block] - 1} "
-                    "similar versions of this code"
+                    f"found {code_blocks[block] - 1} " "similar versions of this code"
                 )
                 print(block[:200] + "…")
                 for other_block, owners in code_blocks_owners.items():
