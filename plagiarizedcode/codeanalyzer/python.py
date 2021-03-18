@@ -31,8 +31,7 @@ class PythonFile(CodeFile):
         text = parenthesis_in_one_line(text)
         return text
 
-    @property
-    def blocks(self) -> List[str]:
+    def _get_blocks(self) -> List[str]:
         result = [""]
         for line in self.normalized_text.splitlines():
             if line.endswith(":") and not line.startswith((" ", "\t")):

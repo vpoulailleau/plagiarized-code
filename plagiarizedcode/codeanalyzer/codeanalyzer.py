@@ -28,6 +28,7 @@ class CodeFile(metaclass=_RegisteringMeta):
         self.path = path
         self._text = None
         self._normalized_text = None
+        self._blocks = None
 
     @property
     def text(self):
@@ -62,9 +63,13 @@ class CodeFile(metaclass=_RegisteringMeta):
     @property
     def blocks(self) -> List[str]:
         """Return list of code blocks."""
-        raise NotImplementedError(
-            f"To be implemented by a subclass {self.path}"
-        )
+        if self._blocks is None:
+            self._blocks = self._get_blocks()
+        return self._blocks
+
+    def _get_blocks(self) -> List[str]:
+        """Return list of code blocks."""
+        raise NotImplementedError(f"To be implemented by a subclass {self.path}")
 
 
 _ignored_dirs = ("venv", "env", ".git", "__pycache__")
