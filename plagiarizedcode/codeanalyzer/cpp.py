@@ -11,10 +11,6 @@ class CppFile(CodeFile):
 
     supported_extensions = ("c", "h", "cpp", "hpp")
 
-    def _get_text(self):
-        with open(self.path, "r", encoding="utf-8") as f:
-            return f.read()
-
     def _get_normalized_text(self):
         text = self.text
         lines = []

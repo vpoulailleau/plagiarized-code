@@ -48,7 +48,11 @@ class CodeFile(metaclass=_RegisteringMeta):
 
     def _get_text(self) -> str:
         """Return textual representation of the code."""
-        raise NotImplementedError("To be implemented by a subclass")
+        try:
+            return self.path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            pass
+        return self.path.read_text(encoding="cp1252")
 
     def _get_normalized_text(self) -> str:
         """
