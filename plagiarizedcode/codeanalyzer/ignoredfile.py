@@ -21,3 +21,6 @@ class IgnoredFile(CodeFile):
 
     def _get_normalized_text(self):
         return ""
+
+    def _get_blocks(self) -> list[str]:
+        return []
