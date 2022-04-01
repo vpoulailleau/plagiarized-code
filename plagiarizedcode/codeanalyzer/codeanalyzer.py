@@ -1,10 +1,8 @@
 """Base class of code analyzer."""
 
 from pathlib import Path
-from typing import Union, Tuple, List, Sequence
 
 import simplelogging
-import textdistance
 
 log = simplelogging.get_logger()
 
@@ -21,7 +19,7 @@ class _RegisteringMeta(type):
 class CodeFile(metaclass=_RegisteringMeta):
     """Base class of code file."""
 
-    supported_extensions: Tuple[str] = ()  # ("cpp", "cxx", "hpp", "h")
+    supported_extensions: tuple[str] = ()  # ("cpp", "cxx", "hpp", "h")
 
     def __init__(self, path: Path):
         """Initializer."""
@@ -61,13 +59,13 @@ class CodeFile(metaclass=_RegisteringMeta):
         raise NotImplementedError("To be implemented by a subclass")
 
     @property
-    def blocks(self) -> List[str]:
+    def blocks(self) -> list[str]:
         """Return list of code blocks."""
         if self._blocks is None:
             self._blocks = self._get_blocks()
         return self._blocks
 
-    def _get_blocks(self) -> List[str]:
+    def _get_blocks(self) -> list[str]:
         """Return list of code blocks."""
         raise NotImplementedError(f"To be implemented by a subclass {self.path}")
 
@@ -80,12 +78,12 @@ class CodeAnalyzer:
 
     def __init__(self, name: str, path=None):
         """Initializer."""
-        self.files: List[CodeFile] = []
+        self.files: list[CodeFile] = []
         self.name = name
         if path:
             self.add_path(path)
 
-    def add_path(self, path: Union[str, Path]) -> None:
+    def add_path(self, path: str | Path) -> None:
         """
         Add to the list of source files the files in path.
 
@@ -129,7 +127,7 @@ class CodeAnalyzer:
         return "\n".join(code.normalized_text for code in self.files)
 
     @property
-    def blocks(self) -> List[str]:
+    def blocks(self) -> list[str]:
         """Return list of code blocks."""
         result = []
         for code in self.files:
