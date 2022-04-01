@@ -56,14 +56,20 @@ class CppFile(CodeFile):
 
                 match = ""
                 level = 0
-                for char in line:
+                for index, char in enumerate(line):
                     match += char
                     if char == "{":
                         level += 1
                     if char == "}":
                         level -= 1
-                    if level == 0 and char == ";":
-                        break
+                    if level == 0:
+                        if char == "}":
+                            m = re.match(r"[^{};]*;", line[index + 1 :])
+                            if m is not None:
+                                match += m[0]
+                            break
+                        elif char == ";":
+                            break
                 content.append(match.lstrip())
                 line = line[len(match) :]
 
