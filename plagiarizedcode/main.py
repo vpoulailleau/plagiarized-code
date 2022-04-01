@@ -2,9 +2,7 @@
 
 import argparse
 import re
-from functools import lru_cache
 from pathlib import Path
-from typing import List
 
 import simplelogging
 import textdistance
@@ -12,9 +10,10 @@ import textdistance
 from plagiarizedcode.codeanalyzer.codeanalyzer import CodeAnalyzer
 from plagiarizedcode.codeanalyzer.python import PythonFile  # noqa
 from plagiarizedcode.codeanalyzer.ignoredfile import IgnoredFile  # noqa
+from plagiarizedcode.codeanalyzer.cpp import CppFile  # noqa
 
 log = None
-analyzers: List[CodeAnalyzer] = []
+analyzers: list[CodeAnalyzer] = []
 code_blocks = {}
 code_blocks_owners = {}
 _code_len_cache = {}
