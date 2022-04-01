@@ -35,7 +35,6 @@ class CppFile(CodeFile):
         return text
 
     def _get_blocks(self) -> list[str]:
-        result = [""]
         content = [""]
         text = self._get_normalized_text()
         for line in text.splitlines():
@@ -77,11 +76,4 @@ class CppFile(CodeFile):
                     log.error("unparsed text: >>>%s", line)
                     break
 
-        log.warning("\n\n".join(content))
-
-        # TODO
-        # for line in self.normalized_text.splitlines():
-        #     if line.endswith("{"):
-        #         result.append("{\n")
-        #     result[-1] += line.lstrip() + "\n"
-        return result
+        return [line for line in content if line.strip()]
