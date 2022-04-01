@@ -96,6 +96,7 @@ class CodeAnalyzer:
         If path is a file, add the file.
         """
         path = Path(path)
+        log.debug("adding %s", str(path))
         if path.is_dir():
             if path.name in _ignored_dirs:
                 log.debug("ignoring directory %s", path)
