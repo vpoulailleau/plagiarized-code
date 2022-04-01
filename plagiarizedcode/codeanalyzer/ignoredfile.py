@@ -15,6 +15,7 @@ class IgnoredFile(CodeFile):
         "cbp",
         "csv",
         "depend",
+        "html",
         "iml",
         "jpeg",
         "jpg",
