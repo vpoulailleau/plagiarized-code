@@ -1,2 +1,2 @@
 simplelogging==0.11.0
-textdistance[extras]==4.4.0
+textdistance[extras]==4.5.0
