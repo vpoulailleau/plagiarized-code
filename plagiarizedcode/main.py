@@ -69,7 +69,7 @@ def _check_for_similarities() -> None:
 def _display_result() -> None:
     """Display results of copy analysis."""
     nb_analyzers = len(analyzers)
-    for code in analyzers:
+    for code in sorted(analyzers):
         print("\n\n")
         print("#" * 80)
         print(code.name)

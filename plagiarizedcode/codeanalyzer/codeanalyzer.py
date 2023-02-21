@@ -91,6 +91,9 @@ class CodeAnalyzer:
         if path is not None:
             self.add_path(path)
 
+    def __gt__(self, other):
+        return self.name > other.name
+
     def add_path(self, path: str | Path) -> None:
         """
         Add to the list of source files the files in path.
