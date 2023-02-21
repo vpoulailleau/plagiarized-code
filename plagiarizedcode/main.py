@@ -43,8 +43,11 @@ def code_len(code: str) -> int:
 def code_is_similar(code1, code2):
     len_code1 = code_len(code1)
     len_code2 = code_len(code2)
+    if len_code1 / len_code2 > 1.20 or len_code2 / len_code1 > 1.20:
+        return False  # too much length difference
     tolerance = max(len_code1, len_code2) * 0.3
-    return textdistance.damerau_levenshtein.distance(code1, code2) < tolerance
+    distance = textdistance.damerau_levenshtein.distance(code1, code2)
+    return distance < tolerance
 
 
 def _check_for_similarities() -> None:
@@ -79,8 +82,7 @@ def _display_result() -> None:
                 code_blocks[block] > 1
                 # exclude too common parts (statement of the exercice?)
                 and code_blocks[block] < 0.8 * nb_analyzers
-                # ignore too small blocks
-                and len(block.splitlines()) > 2
+                and len(block) > 50
             ):
                 print()
                 print("-" * 80)
