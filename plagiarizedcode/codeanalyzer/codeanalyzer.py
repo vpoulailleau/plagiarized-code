@@ -28,6 +28,9 @@ class CodeFile(metaclass=_RegisteringMeta):
         self._normalized_text = None
         self._blocks = None
 
+    def __gt__(self, other):
+        return self.path > other.path
+
     @property
     def text(self):
         """Return textual representation of the code."""
@@ -130,7 +133,7 @@ class CodeAnalyzer:
     @property
     def text(self):
         """Return textual representation of the code."""
-        return "\n".join(code.text for code in self.files)
+        return "\n".join(code.text for code in sorted(self.files))
 
     @property
     def normalized_text(self):
@@ -139,7 +142,7 @@ class CodeAnalyzer:
 
         Comments are ignored, code is indented in a strict fashion.
         """
-        return "\n".join(code.normalized_text for code in self.files)
+        return "\n".join(code.normalized_text for code in sorted(self.files))
 
     @property
     def blocks(self) -> list[str]:
