@@ -30,7 +30,14 @@ class CppFile(CodeFile):
                 else:
                     lines.append(line)
         text = " ".join(lines)
-        text = re.sub(r" ?([{}()[\]]) ?", r" \1 ", text)
+
+        # spaces around parenthesis
+        text = re.sub(r" *([{}()[\]]) *", r" \1 ", text)
+        # spaces around operators
+        text = re.sub(r" *([+-/*<>=&^|~!?:%]+) *", r" \1 ", text)
+        # spaces around others
+        text = re.sub(r" *([;,]) *", r"\1 ", text)
+
         text = re.sub(r"[ \t]+", " ", text)
 
         return text
