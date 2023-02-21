@@ -82,7 +82,7 @@ def _display_result() -> None:
                 code_blocks[block] > 1
                 # exclude too common parts (statement of the exercice?)
                 and code_blocks[block] < 0.8 * nb_analyzers
-                and len(block) > 50
+                and len(block) > 100
             ):
                 print()
                 print("-" * 80)
