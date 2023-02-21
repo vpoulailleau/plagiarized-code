@@ -13,7 +13,9 @@ class IgnoredFile(CodeFile):
     supported_extensions = (
         "",
         "cbp",
+        "checksum",
         "csv",
+        "dblite",
         "depend",
         "html",
         "iml",
