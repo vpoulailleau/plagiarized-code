@@ -80,11 +80,15 @@ _ignored_dirs = ("venv", "env", ".git", "__pycache__")
 class CodeAnalyzer:
     """Code analyzer."""
 
-    def __init__(self, name: str, path=None):
+    def __init__(self, name: str, path=None, ignore: list[str] = None):
         """Initializer."""
         self.files: list[CodeFile] = []
         self.name = name
-        if path:
+        if ignore is None:
+            self.ignore = []
+        else:
+            self.ignore = ignore
+        if path is not None:
             self.add_path(path)
 
     def add_path(self, path: str | Path) -> None:
@@ -108,6 +112,9 @@ class CodeAnalyzer:
                 if dir_.name in _ignored_dirs:
                     log.debug("ignoring file because of a directory: %s", path)
                     return
+            if any(part in str(path) for part in self.ignore):
+                log.debug("ignore %s", path)
+                return
             extension = path.suffix
             for cls in _code_file_classes:
                 if extension[1:] in cls.supported_extensions:

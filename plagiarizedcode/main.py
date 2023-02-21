@@ -19,14 +19,14 @@ code_blocks_owners = {}
 _code_len_cache = {}
 
 
-def _load_analyzers(path: Path) -> None:
+def _load_analyzers(path: Path, ignore: list[str]) -> None:
     """Load a code analyzer for each child of path."""
     if not path.is_dir():
         log.error("%s is not a directory", path)
 
     for subpath in path.iterdir():
         log.info("Loading code for: %s", subpath)
-        analyzer = CodeAnalyzer(name=subpath.name, path=subpath)
+        analyzer = CodeAnalyzer(name=subpath.name, path=subpath, ignore=ignore)
         if len(analyzer):
             analyzers.append(analyzer)
 
@@ -112,6 +112,14 @@ def main():
         help="path of the directory to check",
         default=".",
     )
+    parser.add_argument(
+        "--ignore",
+        metavar="PATH",
+        type=str,
+        nargs="+",
+        help="paths to ignore",
+        default=[""],
+    )
     args = parser.parse_args()
     if args.verbose < 1:
         log.reduced_logging()
@@ -121,7 +129,7 @@ def main():
         log.full_logging()
 
     log.info("Starting analysis of %s", str(args.input_path))
-    _load_analyzers(Path(args.input_path))
+    _load_analyzers(Path(args.input_path), args.ignore)
     _check_for_similarities()
     _display_result()
 
