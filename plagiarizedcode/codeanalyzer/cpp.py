@@ -30,6 +30,7 @@ class CppFile(CodeFile):
                 else:
                     lines.append(line)
         text = " ".join(lines)
+        text = re.sub(r" ?([{}()[\]]) ?", r" \1 ", text)
         text = re.sub(r"[ \t]+", " ", text)
 
         return text
